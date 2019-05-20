@@ -1,0 +1,47 @@
+#include "dht.h"
+#include <ESP8266WiFi.h>;
+#include <WiFiClient.h>;
+#include <ThingSpeak.h>;
+#define dht_apin 0 // Analog Pin sensor is connected to
+
+const char* ssid     = "technology";
+const char* password = "technology";
+int t,h;
+dht DHT;
+
+WiFiClient client;
+ 
+unsigned long myChannelNumber = 777557; //Your Channel Number (Without Brackets)
+const char * myWriteAPIKey = "EGE2KITZ95DMGTQ4"; //Your Write API Key
+ 
+void setup(){
+ 
+  Serial.begin(9600);
+  delay(500);//Delay to let system boot
+  Serial.println("DHT11 Humidity & temperature Sensor\n\n");
+  delay(1000);//Wait before accessing Sensor
+
+WiFi.begin(ssid, password);
+ThingSpeak.begin(client); 
+}
+
+
+void loop(){
+  //Start of Program 
+ 
+    DHT.read11(dht_apin);
+    h= DHT.humidity;
+    t= DHT.temperature;
+    Serial.print("Current humidity = ");
+    Serial.print(h);
+    Serial.print("%  ");
+    Serial.print("temperature = ");
+    Serial.print(t); 
+    Serial.println("C  ");
+    
+ThingSpeak.writeField(myChannelNumber,1,t,myWriteAPIKey); //Update in ThingSpeak   ThingSpeak.writeField(myChannelNumber, 1,distance, myWriteAPIKey); //Update in ThingSpeak 
+delay(5000);//Wait 5 seconds before accessing sensor again.
+ 
+  //Fastest should be once every two seconds.
+ 
+}// end loop() 
